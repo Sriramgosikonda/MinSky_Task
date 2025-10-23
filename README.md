@@ -258,44 +258,11 @@ Write 300-500 words explaining:
 - Trade-offs you made
 - What you would improve with more time
 
-**4. Working Application**
+# Output Images
 
-We should be able to:
+Here are the screenshots of the project output:
 
-- Clone your repo
-- Run setup commands
-- Seed the database
-- Access the working application
-- Run your tests and see them pass
+![Screenshot 2025-10-23 133757](./Screenshot%202025-10-23%20133757.png)  
+![Screenshot 2025-10-23 133826](./Screenshot%202025-10-23%20133826.png)  
+![Screenshot 2025-10-23 133915](./Screenshot%202025-10-23%20133915.png)
 
-## What's NOT Required
-
-To keep the scope reasonable for 7 days, you do **not** need to implement:
-
-**Payment Processing**
-
-- No Stripe/PayPal integration needed
-- No actual payment gateway
-- When a booking is created, just record the price - assume payment happened
-
-**Authentication System**
-
-- No user registration/login required
-- For the booking flow, just ask for email address
-- Simple admin authentication (hardcoded API key is fine) for creating events
-
-**Email Notifications**
-
-- No need to send booking confirmations
-- No email service integration
-
-**Advanced Features**
-
-- No refunds or cancellation flow
-- No QR codes or ticket PDFs
-- No seat selection or ticket tiers
-
-Focus on the core challenges: dynamic pricing algorithm and concurrency control. Everything else should be kept minimal.
-"# MinSky_Task"  
-![Alt text](.MinSky_Task
-/Screenshot 2025-10-23 133757.png)
