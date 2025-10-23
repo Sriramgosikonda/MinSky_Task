@@ -297,3 +297,5 @@ To keep the scope reasonable for 7 days, you do **not** need to implement:
 
 Focus on the core challenges: dynamic pricing algorithm and concurrency control. Everything else should be kept minimal.
 "# MinSky_Task"  
+![Alt text](.MinSky_Task
+/Screenshot 2025-10-23 133757.png)
