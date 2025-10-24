@@ -66,6 +66,14 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "transformIgnorePatterns": [
+      "packages/database",
+      "node_modules/(?!(@nestjs))"
+    ],
+    "moduleNameMapper": {
+      "^@repo/database$": "<rootDir>/../../../packages/database/src/index.ts"
+    },
+    "extensionsToTreatAsEsm": [".ts"],
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],

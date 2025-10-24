@@ -5,5 +5,13 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  "transformIgnorePatterns": [
+    "packages/database",
+    "node_modules/(?!(@nestjs))"
+  ],
+  "moduleNameMapper": {
+    "^@repo/database$": "../../../packages/database/src/index.ts"
+  },
+  "extensionsToTreatAsEsm": [".ts"]
 }

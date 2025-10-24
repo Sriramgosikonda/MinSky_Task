@@ -19,18 +19,19 @@ export class PricingService {
     // Time-based adjustment: closer to event, higher price
     const timeAdjustment = Math.max(0, (30 - daysUntilEvent) / 30) * this.TIME_WEIGHT;
 
-    // Demand-based adjustment: more recent bookings, higher price
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    // Demand-based adjustment: if more than 10 bookings in last hour, increase by 15%
+    const hourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
     const recentBookings = await db
       .select({ count: sql<number>`count(*)` })
       .from(bookings)
-      .where(sql`${bookings.eventId} = ${eventId} AND ${bookings.createdAt} > ${weekAgo}`);
+      .where(sql`${bookings.eventId} = ${eventId} AND ${bookings.createdAt} > ${hourAgo}`);
 
-    const demandAdjustment = (recentBookings[0].count / 10) * this.DEMAND_WEIGHT; // Assume 10 bookings/week as baseline
+    const demandAdjustment = recentBookings[0].count > 10 ? 0.15 * this.DEMAND_WEIGHT : 0;
 
-    // Inventory adjustment: fewer tickets left, higher price
+    // Inventory adjustment: when less than 20% tickets remain, increase by 25%
     const remainingTickets = e.totalTickets - e.bookedTickets;
-    const inventoryAdjustment = ((e.totalTickets - remainingTickets) / e.totalTickets) * this.INVENTORY_WEIGHT;
+    const remainingPercentage = remainingTickets / e.totalTickets;
+    const inventoryAdjustment = remainingPercentage < 0.2 ? 0.25 * this.INVENTORY_WEIGHT : 0;
 
     const totalAdjustment = timeAdjustment + demandAdjustment + inventoryAdjustment;
     const newPrice = parseFloat(e.basePrice) * (1 + totalAdjustment);
@@ -54,14 +55,16 @@ export class PricingService {
     const daysUntilEvent = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24);
 
     const timeAdjustment = Math.max(0, (30 - daysUntilEvent) / 30) * this.TIME_WEIGHT;
+    const hourAgo = new Date(now.getTime() - 60 * 60 * 1000).toISOString();
     const recentBookings = await db
       .select({ count: sql<number>`count(*)` })
       .from(bookings)
-      .where(sql`${bookings.eventId} = ${eventId} AND ${bookings.createdAt} > ${new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString()}`);
+      .where(sql`${bookings.eventId} = ${eventId} AND ${bookings.createdAt} > ${hourAgo}`);
 
-    const demandAdjustment = ((recentBookings[0]?.count || 0) / 10) * this.DEMAND_WEIGHT;
+    const demandAdjustment = recentBookings[0].count > 10 ? 0.15 * this.DEMAND_WEIGHT : 0;
     const remainingTickets = e.totalTickets - e.bookedTickets;
-    const inventoryAdjustment = ((e.totalTickets - remainingTickets) / e.totalTickets) * this.INVENTORY_WEIGHT;
+    const remainingPercentage = remainingTickets / e.totalTickets;
+    const inventoryAdjustment = remainingPercentage < 0.2 ? 0.25 * this.INVENTORY_WEIGHT : 0;
 
     return {
       basePrice: parseFloat(e.basePrice),

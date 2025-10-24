@@ -38,7 +38,7 @@ export default function EventDetailPage() {
 
   const fetchEvent = async () => {
     try {
-      const res = await fetch(`http://localhost:3001/events/${id}`);
+      const res = await fetch(`http://localhost:3000/events/${id}`);
       const data = await res.json();
       setEvent(data);
     } catch (error) {
@@ -53,7 +53,7 @@ export default function EventDetailPage() {
     setBookingStatus('Booking...');
 
     try {
-      const res = await fetch('http://localhost:3001/bookings', {
+      const res = await fetch('http://localhost:3000/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId: id, ...booking }),
@@ -122,7 +122,7 @@ export default function EventDetailPage() {
               <input
                 type="number"
                 min="1"
-                max={event.totalTickets - event.bookedTickets}
+                max={Math.max(1, event.totalTickets - event.bookedTickets)}
                 value={booking.quantity}
                 onChange={(e) => setBooking({ ...booking, quantity: parseInt(e.target.value) })}
                 className="w-full p-2 bg-slate-800 border border-slate-700 rounded"

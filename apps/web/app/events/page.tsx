@@ -26,7 +26,7 @@ export default function EventsPage() {
 
   const fetchEvents = async () => {
     try {
-      const res = await fetch('http://localhost:3001/events');
+      const res = await fetch('http://localhost:3000/events');
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
       }

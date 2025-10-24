@@ -23,7 +23,22 @@ export default function MyBookingsPage() {
     try {
       const res = await fetch(`http://localhost:3000/bookings?userEmail=${encodeURIComponent(email)}`);
       const data = await res.json();
-      setBookings(data);
+
+      // Fetch event details for each booking
+      const bookingsWithEvents = await Promise.all(
+        data.map(async (booking: Booking) => {
+          try {
+            const eventRes = await fetch(`http://localhost:3000/events/${booking.eventId}`);
+            const eventData = await eventRes.json();
+            return { ...booking, event: { name: eventData.name, date: eventData.date, venue: eventData.venue } };
+          } catch (error) {
+            console.error('Failed to fetch event for booking:', error);
+            return booking;
+          }
+        })
+      );
+
+      setBookings(bookingsWithEvents);
     } catch (error) {
       console.error('Failed to fetch bookings:', error);
     } finally {
@@ -73,7 +88,13 @@ export default function MyBookingsPage() {
           <div className="space-y-4">
             {bookings.map((booking) => (
               <div key={booking.id} className="bg-slate-800 p-6 rounded-lg">
-                <p><strong>Event ID:</strong> {booking.eventId}</p>
+                {booking.event && (
+                  <>
+                    <p><strong>Event:</strong> {booking.event.name}</p>
+                    <p><strong>Venue:</strong> {booking.event.venue}</p>
+                    <p><strong>Date:</strong> {new Date(booking.event.date).toLocaleDateString()}</p>
+                  </>
+                )}
                 <p><strong>Email:</strong> {booking.userEmail}</p>
                 <p><strong>Quantity:</strong> {booking.quantity}</p>
                 <p><strong>Price Paid:</strong> ₹{booking.pricePaid}</p>
